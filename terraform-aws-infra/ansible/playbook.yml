@@ -34,16 +34,29 @@
         image: prom/node-exporter:latest
         state: started
         restart_policy: always
-        published_ports:
-          - "9100:9100"
+        network_mode: host
+
+    - name: Create Prometheus config directory
+      file:
+        path: /etc/prometheus
+        state: directory
+
+    - name: Copy Prometheus scrape config
+      copy:
+        src: files/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
 
     - name: Run Prometheus
       docker_container:
         name: prometheus
         image: prom/prometheus:latest
         state: started
+        restart_policy: always
         published_ports:
           - "9090:9090"
+        volumes:
+          - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        network_mode: host
 
     - name: Run Grafana
       docker_container:

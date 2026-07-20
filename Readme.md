@@ -114,4 +114,4 @@ Grafana and Prometheus are restricted to your IP (`my_ip`) by the security group
 ```bash
 cd terraform-aws-infra
 terraform destroy
-```
+``ll`

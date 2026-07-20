@@ -1,0 +1,54 @@
+---
+- name: Configure web server with Docker, Nginx, and monitoring
+  hosts: webserver
+  become: true
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Start and enable Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull and run Nginx container
+      docker_container:
+        name: nginx_web
+        image: nginx:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"
+
+    - name: Run node_exporter for monitoring
+      docker_container:
+        name: node_exporter
+        image: prom/node-exporter:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "9100:9100"
+
+    - name: Run Prometheus
+      docker_container:
+        name: prometheus
+        image: prom/prometheus:latest
+        state: started
+        published_ports:
+          - "9090:9090"
+
+    - name: Run Grafana
+      docker_container:
+        name: grafana
+        image: grafana/grafana:latest
+        state: started
+        published_ports:
+          - "3000:3000"

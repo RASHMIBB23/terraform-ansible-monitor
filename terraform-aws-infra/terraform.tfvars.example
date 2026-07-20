@@ -1,0 +1,4 @@
+aws_region = "ap-south-1"
+ami_id     = "ami-0098dcd2a2aca5b90"
+key_name   = "terraform-ansible-keypair"
+my_ip      = "122.168.66.240/32"

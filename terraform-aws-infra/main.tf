@@ -71,6 +71,13 @@ resource "aws_security_group" "web_sg" {
     protocol    = "tcp"
     cidr_blocks = [var.my_ip]
   }
+ingress {
+    description = "Jenkins Webhook"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port   = 0
@@ -81,6 +88,7 @@ resource "aws_security_group" "web_sg" {
 
   tags = { Name = "web-sg" }
 }
+
 
 resource "aws_instance" "web" {
   ami                    = var.ami_id

@@ -144,4 +144,20 @@ Destroy the infrastructure when you're done to avoid ongoing AWS charges:
 ```bash
 cd terraform-aws-infra
 terraform destroy
+
+
+
+
+**Cause:**
+The pipeline copies the SSH key from Jenkins credentials, then runs `chmod 400` on it to satisfy SSH's private-key permission requirements. On the *next* run, `cp` tries to overwrite that same 400-permission file — but overwriting requires write access to the existing file, not just the directory, so the copy fails.
+
+**Fix:**
+Remove the old key file before copying a fresh one, in the `Run Ansible Playbook` stage:
+
+```groovy
+sh 'rm -f terraform-ansible-keypair.pem'
+sh 'cp $SSH_KEY_FILE terraform-ansible-keypair.pem'
+sh 'chmod 400 terraform-ansible-keypair.pem'
 ```
+
+This ensures every pipeline run starts with a clean key file regardless of permissions left by the previous run.```

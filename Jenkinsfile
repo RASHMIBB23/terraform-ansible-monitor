@@ -11,7 +11,9 @@ pipeline {
                 }
             }
         }
-        stage('Run Ansible Playbook') {
+     
+       }
+       stage('Run Ansible Playbook') {
             steps {
                 dir('terraform-aws-infra/ansible') {
                     sh 'ansible-playbook -i hosts.ini playbook.yml'

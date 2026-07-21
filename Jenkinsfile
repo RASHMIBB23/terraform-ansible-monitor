@@ -25,7 +25,11 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 dir('terraform-aws-infra/ansible') {
-                    sh 'ansible-playbook -i hosts.ini playbook.yml'
+                    withCredentials([file(credentialsId: 'ec2-ssh-key', variable: 'SSH_KEY_FILE')]) {
+                        sh 'cp $SSH_KEY_FILE terraform-ansible-keypair.pem'
+                        sh 'chmod 400 terraform-ansible-keypair.pem'
+                        sh 'ansible-playbook -i hosts.ini playbook.yml'
+                    }
                 }
             }
         }
